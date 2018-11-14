@@ -85,6 +85,9 @@
                             <?= t('not assigned') ?>
                         <?php endif ?>
                         </span>
+                        <?php if ($editable && $task['owner_id'] != $this->user->getId()): ?>
+                            - <span><?= $this->url->link(t('Assign to me'), 'TaskModificationController', 'assignToMe', ['task_id' => $task['id'], 'project_id' => $task['project_id']]) ?></span>
+                        <?php endif ?>
                     </li>
                     <?php if ($task['creator_username']): ?>
                         <li>
@@ -116,12 +119,14 @@
                             <span><?= $this->dt->datetime($task['date_due']) ?></span>
                         </li>
                     <?php endif ?>
-                    <?php if ($task['date_started']): ?>
-                        <li>
-                            <strong><?= t('Started:') ?></strong>
+                    <li>
+                        <strong><?= t('Started:') ?></strong>
+                        <?php if ($task['date_started']): ?>
                             <span><?= $this->dt->datetime($task['date_started']) ?></span>
-                        </li>
-                    <?php endif ?>
+                        <?php elseif ($editable): ?>
+                            <span><?= $this->url->link(t('Start now'), 'TaskModificationController', 'start', ['task_id' => $task['id'], 'project_id' => $task['project_id']]) ?></span>
+                        <?php endif ?>
+                    </li>
                     <li>
                         <strong><?= t('Created:') ?></strong>
                         <span><?= $this->dt->datetime($task['date_creation']) ?></span>
@@ -151,7 +156,7 @@
             <div class="task-tags">
                 <ul>
                     <?php foreach ($tags as $tag): ?>
-                        <li><?= $this->text->e($tag) ?></li>
+                        <li class="task-tag <?= $tag['color_id'] ? "color-{$tag['color_id']}" : '' ?>"><?= $this->text->e($tag['name']) ?></li>
                     <?php endforeach ?>
                 </ul>
             </div>
@@ -162,12 +167,6 @@
         <?= $this->app->component('external-task-view', array(
             'url' => $this->url->href('ExternalTaskViewController', 'show', array('project_id' => $task['project_id'], 'task_id' => $task['id'])),
         )) ?>
-    <?php endif ?>
-
-    <?php if ($editable && empty($task['date_started'])): ?>
-        <div class="buttons-header">
-            <?= $this->url->button('play', t('Set start date'), 'TaskModificationController', 'start', array('task_id' => $task['id'], 'project_id' => $task['project_id'])) ?>
-        </div>
     <?php endif ?>
 
     <?= $this->hook->render('template:task:details:bottom', array('task' => $task)) ?>

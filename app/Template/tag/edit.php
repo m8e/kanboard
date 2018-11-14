@@ -7,7 +7,10 @@
     <?= $this->form->hidden('project_id', $values) ?>
 
     <?= $this->form->label(t('Name'), 'name') ?>
-    <?= $this->form->text('name', $values, $errors, array('autofocus', 'required', 'maxlength="255"')) ?>
+    <?= $this->form->text('name', $values, $errors, array('autofocus', 'required', 'maxlength="191"')) ?>
+
+    <?= $this->form->label(t('Color'), 'color_id') ?>
+    <?= $this->form->select('color_id', array('' => t('No color')) + $colors, $values, $errors, array(), 'color-picker') ?>
 
     <?= $this->modal->submitButtons() ?>
 </form>

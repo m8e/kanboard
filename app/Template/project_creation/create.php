@@ -8,7 +8,7 @@
         <?= $this->form->hidden('is_private', $values) ?>
 
         <?= $this->form->label(t('Name'), 'name') ?>
-        <?= $this->form->text('name', $values, $errors, array('autofocus', 'required', 'maxlength="50"')) ?>
+        <?= $this->form->text('name', $values, $errors, array('autofocus', 'required')) ?>
 
         <?php if (count($projects_list) > 1): ?>
             <?= $this->form->label(t('Create from another project'), 'src_project_id') ?>
@@ -20,6 +20,7 @@
 
             <?php if (! $is_private): ?>
                 <?= $this->form->checkbox('projectPermissionModel', t('Permissions'), 1, true) ?>
+                <?= $this->form->checkbox('projectRoleModel', t('Custom roles'), 1, true) ?>
             <?php endif ?>
 
             <?= $this->form->checkbox('categoryModel', t('Categories'), 1, true) ?>

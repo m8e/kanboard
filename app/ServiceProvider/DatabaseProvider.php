@@ -130,11 +130,13 @@ class DatabaseProvider implements ServiceProviderInterface
             'username' => DB_USERNAME,
             'password' => DB_PASSWORD,
             'database' => DB_NAME,
-            'charset'  => 'utf8',
+            'charset'  => 'utf8mb4',
             'port'     => DB_PORT,
             'ssl_key'  => DB_SSL_KEY,
             'ssl_ca'   => DB_SSL_CA,
             'ssl_cert' => DB_SSL_CERT,
+            'verify_server_cert' => DB_VERIFY_SERVER_CERT,
+            'timeout'  => DB_TIMEOUT,
         ));
     }
 
@@ -155,6 +157,7 @@ class DatabaseProvider implements ServiceProviderInterface
             'password' => DB_PASSWORD,
             'database' => DB_NAME,
             'port'     => DB_PORT,
+            'timeout'  => DB_TIMEOUT,
         ));
     }
 }

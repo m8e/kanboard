@@ -2,6 +2,8 @@
 
 /*******************************************************************/
 /* Rename this file to config.php if you want to change the values */
+/*                                                                 */
+/* Make sure all paths are absolute by using __DIR__ where needed  */
 /*******************************************************************/
 
 // Data folder (must be writeable by the web server user and absolute)
@@ -10,14 +12,14 @@ define('DATA_DIR', __DIR__.DIRECTORY_SEPARATOR.'data');
 // Enable/Disable debug
 define('DEBUG', false);
 
-// Available log drivers: syslog, stderr, stdout or file
-define('LOG_DRIVER', '');
+// Available log drivers: syslog, stderr, stdout, system or file
+define('LOG_DRIVER', 'system');
 
 // Log filename if the log driver is "file"
 define('LOG_FILE', DATA_DIR.DIRECTORY_SEPARATOR.'debug.log');
 
 // Plugins directory
-define('PLUGINS_DIR', 'plugins');
+define('PLUGINS_DIR', __DIR__.DIRECTORY_SEPARATOR.'plugins');
 
 // Plugins directory URL
 define('PLUGIN_API_URL', 'https://kanboard.org/plugins.json');
@@ -84,6 +86,12 @@ define('DB_SSL_CERT', null);
 
 // Mysql SSL CA
 define('DB_SSL_CA', null);
+
+// Mysql SSL server verification, set to false if you don't want the Mysql driver to validate the certificate CN
+define('DB_VERIFY_SERVER_CERT', null);
+
+// Timeout value for PDO attribute
+define('DB_TIMEOUT', null);
 
 // Enable LDAP authentication (false by default)
 define('LDAP_AUTH', false);

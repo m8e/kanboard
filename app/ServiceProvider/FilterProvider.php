@@ -15,7 +15,9 @@ use Kanboard\Filter\TaskColorFilter;
 use Kanboard\Filter\TaskColumnFilter;
 use Kanboard\Filter\TaskCommentFilter;
 use Kanboard\Filter\TaskCompletionDateFilter;
+use Kanboard\Filter\TaskCompletionDateRangeFilter;
 use Kanboard\Filter\TaskCreationDateFilter;
+use Kanboard\Filter\TaskCreationDateRangeFilter;
 use Kanboard\Filter\TaskCreatorFilter;
 use Kanboard\Filter\TaskDescriptionFilter;
 use Kanboard\Filter\TaskDueDateFilter;
@@ -23,7 +25,9 @@ use Kanboard\Filter\TaskStartDateFilter;
 use Kanboard\Filter\TaskIdFilter;
 use Kanboard\Filter\TaskLinkFilter;
 use Kanboard\Filter\TaskModificationDateFilter;
+use Kanboard\Filter\TaskModificationDateRangeFilter;
 use Kanboard\Filter\TaskMovedDateFilter;
+use Kanboard\Filter\TaskMovedDateRangeFilter;
 use Kanboard\Filter\TaskPriorityFilter;
 use Kanboard\Filter\TaskProjectFilter;
 use Kanboard\Filter\TaskReferenceFilter;
@@ -148,6 +152,9 @@ class FilterProvider implements ServiceProviderInterface
                 ->withFilter(TaskCreationDateFilter::getInstance()
                     ->setDateParser($c['dateParser'])
                 )
+                ->withFilter(TaskCreationDateRangeFilter::getInstance()
+                    ->setDateParser($c['dateParser'])
+                )
                 ->withFilter(TaskCreatorFilter::getInstance()
                     ->setCurrentUserId($c['userSession']->getId())
                 )
@@ -161,6 +168,9 @@ class FilterProvider implements ServiceProviderInterface
                 ->withFilter(TaskCompletionDateFilter::getInstance()
                     ->setDateparser($c['dateParser'])
                 )
+                ->withFilter(TaskCompletionDateRangeFilter::getInstance()
+                    ->setDateparser($c['dateParser'])
+                )
                 ->withFilter(new TaskIdFilter())
                 ->withFilter(TaskLinkFilter::getInstance()
                     ->setDatabase($c['db'])
@@ -168,9 +178,15 @@ class FilterProvider implements ServiceProviderInterface
                 ->withFilter(TaskModificationDateFilter::getInstance()
                     ->setDateParser($c['dateParser'])
                 )
+                ->withFilter(TaskModificationDateRangeFilter::getInstance()
+                    ->setDateParser($c['dateParser'])
+                )
                 ->withFilter(TaskMovedDateFilter::getInstance()
                     ->setDateParser($c['dateParser'])
                 )
+                ->withFilter(TaskMovedDateRangeFilter::getInstance()
+                    ->setDateParser($c['dateParser'])
+                )                
                 ->withFilter(new TaskProjectFilter())
                 ->withFilter(new TaskReferenceFilter())
                 ->withFilter(new TaskScoreFilter())

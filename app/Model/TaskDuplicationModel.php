@@ -36,6 +36,9 @@ class TaskDuplicationModel extends Base
         'recurrence_factor',
         'recurrence_timeframe',
         'recurrence_basedate',
+        'external_provider',
+        'external_uri',
+        'reference',
     );
 
     /**
@@ -54,6 +57,7 @@ class TaskDuplicationModel extends Base
 
         if ($new_task_id !== false) {
             $this->tagDuplicationModel->duplicateTaskTags($task_id, $new_task_id);
+            $this->taskLinkModel->create($new_task_id, $task_id, 4);
         }
 
         return $new_task_id;

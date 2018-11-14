@@ -8,7 +8,144 @@ use PDO;
 use Kanboard\Core\Security\Token;
 use Kanboard\Core\Security\Role;
 
-const VERSION = 127;
+const VERSION = 133;
+
+function version_133(PDO $pdo)
+{
+    $pdo->exec('ALTER TABLE `tags` ADD COLUMN `color_id` VARCHAR(50) DEFAULT NULL');
+}
+
+function version_132(PDO $pdo)
+{
+    $pdo->exec('ALTER TABLE `project_has_categories` ADD COLUMN `color_id` VARCHAR(50) DEFAULT NULL');
+}
+
+function version_131(PDO $pdo)
+{
+    $pdo->exec("ALTER TABLE `users` MODIFY `language` VARCHAR(11) DEFAULT NULL");
+}
+
+/*
+
+This migration convert table encoding to utf8mb4.
+You should also convert the database encoding:
+
+ALTER DATABASE kanboard CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+You might need to run:
+
+REPAIR TABLE table_name;
+OPTIMIZE TABLE table_name;
+
+The max length for Mysql 5.6 is 191 for varchar unique keys in utf8mb4
+
+*/
+function version_130(PDO $pdo)
+{
+    $pdo->exec("ALTER TABLE `swimlanes` MODIFY `name` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `users` MODIFY `username` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `groups` MODIFY `name` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `links` MODIFY `label` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `tags` MODIFY `name` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `sessions` MODIFY `id` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `project_role_has_restrictions` MODIFY `rule` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `project_has_roles` MODIFY `role` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `project_has_categories` MODIFY `name` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `invites` MODIFY `email` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `invites` MODIFY `token` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `groups` MODIFY `name` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `columns` MODIFY `title` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `column_has_restrictions` MODIFY `rule` VARCHAR(191) NOT NULL");
+    $pdo->exec("ALTER TABLE `comments` MODIFY `reference` VARCHAR(191) DEFAULT ''");
+    $pdo->exec("ALTER TABLE `tasks` MODIFY `reference` VARCHAR(191) DEFAULT ''");
+
+    $tables = [
+        'action_has_params',
+        'actions',
+        'column_has_move_restrictions',
+        'column_has_restrictions',
+        'columns',
+        'comments',
+        'currencies',
+        'custom_filters',
+        'group_has_users',
+        'groups',
+        'invites',
+        'last_logins',
+        'links',
+        'password_reset',
+        'plugin_schema_versions',
+        'predefined_task_descriptions',
+        'project_activities',
+        'project_daily_column_stats',
+        'project_daily_stats',
+        'project_has_categories',
+        'project_has_files',
+        'project_has_groups',
+        'project_has_metadata',
+        'project_has_notification_types',
+        'project_has_roles',
+        'project_has_users',
+        'project_role_has_restrictions',
+        'projects',
+        'remember_me',
+        'sessions',
+        'settings',
+        'subtask_time_tracking',
+        'subtasks',
+        'swimlanes',
+        'tags',
+        'task_has_external_links',
+        'task_has_files',
+        'task_has_links',
+        'task_has_metadata',
+        'task_has_tags',
+        'tasks',
+        'transitions',
+        'user_has_metadata',
+        'user_has_notification_types',
+        'user_has_notifications',
+        'user_has_unread_notifications',
+        'users',
+    ];
+
+    foreach ($tables as $table) {
+        $pdo->exec('ALTER TABLE `'.$table.'` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
+    }
+}
+
+function version_129(PDO $pdo)
+{
+    $pdo->exec('ALTER TABLE `projects` MODIFY `name` TEXT NOT NULL');
+    $pdo->exec('ALTER TABLE `projects` MODIFY `email` TEXT');
+    $pdo->exec('ALTER TABLE `action_has_params` MODIFY `name` TEXT NOT NULL');
+    $pdo->exec('ALTER TABLE `action_has_params` MODIFY `value` TEXT NOT NULL');
+    $pdo->exec('ALTER TABLE `actions` MODIFY `event_name` TEXT NOT NULL');
+    $pdo->exec('ALTER TABLE `actions` MODIFY `action_name` TEXT NOT NULL');
+    $pdo->exec("ALTER TABLE `comments` MODIFY `reference` VARCHAR(255) DEFAULT ''");
+    $pdo->exec("ALTER TABLE `custom_filters` MODIFY `filter` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `custom_filters` MODIFY `name` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `groups` MODIFY `name` VARCHAR(255) NOT NULL");
+    $pdo->exec("ALTER TABLE `project_activities` MODIFY `event_name` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `project_has_files` MODIFY `name` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `project_has_files` MODIFY `path` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `subtasks` MODIFY `title` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `swimlanes` MODIFY `name` VARCHAR(255) NOT NULL");
+    $pdo->exec("ALTER TABLE `task_has_external_links` MODIFY `title` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `task_has_external_links` MODIFY `url` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `task_has_files` MODIFY `name` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `task_has_files` MODIFY `path` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `tasks` MODIFY `title` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `tasks` MODIFY `reference` VARCHAR(255) DEFAULT ''");
+    $pdo->exec("ALTER TABLE `user_has_unread_notifications` MODIFY `event_name` TEXT NOT NULL");
+    $pdo->exec("ALTER TABLE `users` MODIFY `username` VARCHAR(255) NOT NULL");
+    $pdo->exec("ALTER TABLE `users` MODIFY `filter` TEXT");
+}
+
+function version_128(PDO $pdo)
+{
+    $pdo->exec('ALTER TABLE `users` ADD COLUMN `filter` VARCHAR(255) DEFAULT NULL');
+}
 
 function version_127(PDO $pdo)
 {
@@ -370,7 +507,7 @@ function version_96(PDO $pdo)
             `group_id` INT NOT NULL,
             `project_id` INT NOT NULL,
             `role` VARCHAR(25) NOT NULL,
-            FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
+            FOREIGN KEY(group_id) REFERENCES `groups`(id) ON DELETE CASCADE,
             FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE,
             UNIQUE(group_id, project_id)
         ) ENGINE=InnoDB CHARSET=utf8
@@ -398,7 +535,7 @@ function version_96(PDO $pdo)
 function version_95(PDO $pdo)
 {
     $pdo->exec("
-        CREATE TABLE groups (
+        CREATE TABLE `groups` (
             id INT NOT NULL AUTO_INCREMENT,
             external_id VARCHAR(255) DEFAULT '',
             name VARCHAR(100) NOT NULL UNIQUE,
@@ -410,7 +547,7 @@ function version_95(PDO $pdo)
         CREATE TABLE group_has_users (
             group_id INT NOT NULL,
             user_id INT NOT NULL,
-            FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
+            FOREIGN KEY(group_id) REFERENCES `groups`(id) ON DELETE CASCADE,
             FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
             UNIQUE(group_id, user_id)
         ) ENGINE=InnoDB CHARSET=utf8
