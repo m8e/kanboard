@@ -24,8 +24,10 @@ define('PLUGINS_DIR', __DIR__.DIRECTORY_SEPARATOR.'plugins');
 // Plugins directory URL
 define('PLUGIN_API_URL', 'https://kanboard.org/plugins.json');
 
-// Enable/Disable plugin installer
-define('PLUGIN_INSTALLER', true);
+// Enable/Disable plugin installer (Disabled by default for security reasons)
+// There is no code review or any approval process to submit a plugin.
+// This is up to the Kanboard instance owner to validate if a plugin is legit.
+define('PLUGIN_INSTALLER', false);
 
 // Available cache drivers are "file" and "memory"
 define('CACHE_DRIVER', 'memory');
@@ -50,7 +52,7 @@ define('MAIL_SMTP_HOSTNAME', '');
 define('MAIL_SMTP_PORT', 25);
 define('MAIL_SMTP_USERNAME', '');
 define('MAIL_SMTP_PASSWORD', '');
-define('MAIL_SMTP_ENCRYPTION', null); // Valid values are "null", "ssl" or "tls"
+define('MAIL_SMTP_ENCRYPTION', null); // Valid values are null (not a string "null"), "ssl" or "tls"
 
 // Sendmail command to use when the transport is "sendmail"
 define('MAIL_SENDMAIL_COMMAND', '/usr/sbin/sendmail -bs');
@@ -239,6 +241,7 @@ define('HTTP_PROXY_HOSTNAME', '');
 define('HTTP_PROXY_PORT', '3128');
 define('HTTP_PROXY_USERNAME', '');
 define('HTTP_PROXY_PASSWORD', '');
+define('HTTP_PROXY_EXCLUDE', 'localhost');
 
 // Set to false to allow self-signed certificates
 define('HTTP_VERIFY_SSL_CERTIFICATE', true);

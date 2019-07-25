@@ -218,6 +218,7 @@ class FormHelper extends Base
             'tabindex' => isset($attributes['tabindex']) ? $attributes['tabindex'] : '-1',
             'labelPreview' => t('Preview'),
             'labelWrite' => t('Write'),
+            'labelTitle' => t('Title'),
             'placeholder' => t('Write your text in Markdown'),
             'autofocus' => isset($attributes['autofocus']) && $attributes['autofocus'],
             'suggestOptions' => array(
@@ -232,7 +233,7 @@ class FormHelper extends Base
         }
 
         $html = '<div class="js-text-editor" data-params=\''.json_encode($params, JSON_HEX_APOS).'\'>';
-        $html .= '<script type="text/template">'.(isset($values[$name]) ? $values[$name] : '').'</script>';
+        $html .= '<script type="text/template">'.(isset($values[$name]) ? htmlspecialchars($values[$name], ENT_QUOTES, 'UTF-8', true) : '').'</script>';
         $html .= '</div>';
         $html .= $this->errorList($errors, $name);
 

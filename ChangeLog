@@ -1,3 +1,94 @@
+Version 1.2.10 (June 21, 2019)
+------------------------------
+
+* Add Auto-Submitted E-mail header as per RFC 8384
+* Add HTML tag in email notifications
+* Add new hook template:export:header
+* Do not show duplicated results when multiple comments match
+* Add Docker manifest with multiple architectures (arm32v6, arm32v7, arm64v8, amd64)
+* Update Docker image to Alpine 3.10.0
+* Add View File on popover to tooltip
+* Fix text file preview
+* Set "start date" and "end date" on projects from API
+* Add cURL support to HTTP Client
+    - Add HTTP_PROXY_EXCLUDE option when cURL is used
+    - Show HTTP client backend in about page
+    - Fallback to legacy Stream Contexts if cURL extension is not available
+* Add Bitcoin to the currency list
+* Add automatic action to move task between columns based on due date
+* Fixes icon opacity when hovered
+* Hide one task count when there is only one swimlane
+* Update translations
+
+Version 1.2.9 (April 5, 2019)
+-----------------------------
+
+* Add Slovak translation
+* Update translations
+* Changes search by reference to case insentive
+* Fix postgres explicit schema name usage
+* Simplify local Docker image build
+* Show a 404 when accessing data folder from URL (Docker Image)
+* Clarify the comment about MAIL_SMTP_ENCRYPTION
+* Remove dependency on Bower
+* Replaces accordion Javascript component by <details> HTML element
+* Fix MySQL migration when using increment values different from 1
+* Add missing webhook event: task.move.project
+* Add new actions to reorder tasks by column
+
+Version 1.2.8 (February 2, 2019)
+--------------------------------
+
+Breaking Changes:
+
+* Authorize only API tokens when 2FA is enabled (no user password)
+* Disable by default plugin installer for security reasons:
+    - There is no code review or any approval process to submit a plugin.
+    - This is up to the Kanboard instance owner to validate if a plugin is legit.
+
+Fixes and Improvements:
+
+* Limit avatar image size
+* Avoid CSRF in users CSV import
+* Avoid XSS in pagination sorting
+* Do not show projects dropdown when prompting the 2FA code
+* Always returns a 404 instead of 403 to avoid people discovering users
+* Check if user role has changed while the session is open
+* Add missing CSRF check in TwoFactorController::deactivate()
+* Hide edit button when user cannot edit task
+* Fix permission check before "Assign to me"
+* Fix permission check before showing project options
+* Fix assignable users on a group with a custom role
+* Fix import of automatic actions when parameters are "unassigned" or "no category"
+* Update license year
+* Update Docker image to Alpine 3.9
+* Update translations
+* Fix PHP error in task views (tag colors)
+* Limit assignee drop-down selector scope
+
+Version 1.2.7 (December 19, 2018)
+---------------------------------
+
+* Write log entry on file removal
+* Auto link duplicated tasks
+* Auto link tasks duplicated to another project
+* Auto link tasks created from a subtask
+* Redirect to board view of the current task after duplication
+* Fix broken link to contributor page
+* Add automatic action for moving a task to a swimlane based on category change
+* Add automatic action to assign a category based on swimlane change
+* Add ordering comments by id along with creation date
+* Fix custom roles duplication (source and destination column_id)
+* Add locale en_GB
+* New automatic action: move the task to another swimlane when assigned
+* Disable php_uname() warning for restrictive environments
+* Add hook to board settings
+* Add method remove() to settings model
+* Add php7-bcmath to Docker image
+* Add sorting by reference in list view
+* Added priority, swimlane, and column values from parent task to task converted from subtask
+* Update translations
+
 Version 1.2.6 (October 10, 2018)
 --------------------------------
 

@@ -33,6 +33,13 @@ abstract class BaseController extends Base
         }
     }
 
+    protected function checkCSRFForm()
+    {
+        if (! $this->token->validateCSRFToken($this->request->getRawValue('csrf_token'))) {
+            throw new AccessForbiddenException();
+        }
+    }
+
     /**
      * Check webhook token
      *
@@ -146,7 +153,8 @@ abstract class BaseController extends Base
         }
 
         if (! $this->userSession->isAdmin() && $this->userSession->getId() != $user['id']) {
-            throw new AccessForbiddenException();
+            // Always returns a 404 otherwise people might guess which user exist.
+            throw new PageNotFoundException();
         }
 
         return $user;
@@ -305,7 +313,7 @@ abstract class BaseController extends Base
 
         return $filter;
     }
-    
+
     /**
      * Redirect the user after the authentication
      *

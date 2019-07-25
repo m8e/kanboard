@@ -119,6 +119,7 @@ class TwoFactorController extends UserViewController
      */
     public function deactivate()
     {
+        $this->checkCSRFForm();
         $user = $this->getUser();
         $this->checkCurrentUser($user);
 
@@ -176,6 +177,7 @@ class TwoFactorController extends UserViewController
 
         $this->response->html($this->helper->layout->app('twofactor/check', array(
             'title' => t('Check two factor authentication code'),
+            'no_layout' => true,
         )));
     }
 

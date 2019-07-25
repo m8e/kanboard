@@ -10,6 +10,10 @@
         <?= $this->form->label(t('Name'), 'name') ?>
         <?= $this->form->text('name', $values, $errors, array('autofocus', 'required')) ?>
 
+        <?= $this->form->label(t('Identifier'), 'identifier') ?>
+        <?= $this->form->text('identifier', $values, $errors, array('autofocus')) ?>
+        <p class="form-help"><?= t('The project identifier is optional and must be alphanumeric, example: MYPROJECT.') ?></p>
+
         <?php if (count($projects_list) > 1): ?>
             <?= $this->form->label(t('Create from another project'), 'src_project_id') ?>
             <?= $this->form->select('src_project_id', $projects_list, $values, array(), array(), 'js-project-creation-select-options') ?>
@@ -26,6 +30,8 @@
             <?= $this->form->checkbox('categoryModel', t('Categories'), 1, true) ?>
             <?= $this->form->checkbox('tagDuplicationModel', t('Tags'), 1, true) ?>
             <?= $this->form->checkbox('actionModel', t('Actions'), 1, true) ?>
+            <?= $this->form->checkbox('customFilterModel', t('Custom filters'), 1, true) ?>
+            <?= $this->form->checkbox('projectMetadataModel', t('Metadata'), 1, false) ?>
             <?= $this->form->checkbox('projectTaskDuplicationModel', t('Tasks'), 1, false) ?>
         </div>
 

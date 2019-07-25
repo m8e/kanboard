@@ -96,13 +96,14 @@ class ProjectCreationController extends BaseController
         $project = array(
             'name' => $values['name'],
             'is_private' => $values['is_private'],
+            'identifier' => $values['identifier'],
         );
 
         return $this->projectModel->create($project, $this->userSession->getId(), true);
     }
 
     /**
-     * Creatte from another project
+     * Create from another project
      *
      * @access private
      * @param  array  $values
@@ -123,7 +124,8 @@ class ProjectCreationController extends BaseController
             $selection,
             $this->userSession->getId(),
             $values['name'],
-            $values['is_private'] == 1
+            $values['is_private'] == 1,
+            $values['identifier']
         );
     }
 }

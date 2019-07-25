@@ -3,6 +3,7 @@
 namespace Kanboard\Controller;
 
 use Kanboard\Core\Csv;
+use Kanboard\Core\Controller\AccessForbiddenException;
 
 /**
  * User Import controller
@@ -35,6 +36,12 @@ class UserImportController extends BaseController
     public function save()
     {
         $values = $this->request->getValues();
+
+        // Note: $values is empty when the CSRF token is invalid.
+        if (empty($values)) {
+            throw new AccessForbiddenException();
+        }
+
         $filename = $this->request->getFilePath('file');
 
         if (! file_exists($filename)) {
@@ -71,7 +78,7 @@ class UserImportController extends BaseController
         if ($this->userImport->counter > 0) {
             $this->flash->success(t('%d user(s) have been imported successfully.', $this->userImport->counter));
         } else {
-            $this->flash->failure(t('Nothing have been imported!'));
+            $this->flash->failure(t('Nothing has been imported!'));
         }
     }
 }

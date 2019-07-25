@@ -21,7 +21,7 @@ defined('CACHE_DIR') or define('CACHE_DIR', DATA_DIR.DIRECTORY_SEPARATOR.'cache'
 // Plugins settings
 defined('PLUGINS_DIR') or define('PLUGINS_DIR', ROOT_DIR.DIRECTORY_SEPARATOR.'plugins');
 defined('PLUGIN_API_URL') or define('PLUGIN_API_URL', 'https://kanboard.org/plugins.json');
-defined('PLUGIN_INSTALLER') or define('PLUGIN_INSTALLER', true);
+defined('PLUGIN_INSTALLER') or define('PLUGIN_INSTALLER', false); // Disabled by default for security reasons
 
 // Enable/disable debug
 defined('DEBUG') or define('DEBUG', strtolower(getenv('DEBUG')) === 'true');
@@ -148,6 +148,7 @@ defined('HTTP_PROXY_HOSTNAME') or define('HTTP_PROXY_HOSTNAME', '');
 defined('HTTP_PROXY_PORT') or define('HTTP_PROXY_PORT', '3128');
 defined('HTTP_PROXY_USERNAME') or define('HTTP_PROXY_USERNAME', '');
 defined('HTTP_PROXY_PASSWORD') or define('HTTP_PROXY_PASSWORD', '');
+defined('HTTP_PROXY_EXCLUDE') or define('HTTP_PROXY_EXCLUDE', 'localhost');
 defined('HTTP_VERIFY_SSL_CERTIFICATE') or define('HTTP_VERIFY_SSL_CERTIFICATE', true);
 
 defined('TOTP_ISSUER') or define('TOTP_ISSUER', 'Kanboard');

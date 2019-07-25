@@ -1,11 +1,18 @@
+DOCKER_IMAGE := docker.io/kanboard/kanboard
+DOCKER_TAG := master
+VERSION := $(shell git rev-parse --short HEAD)
+
+.PHONY: all clean static jshint archive test-sqlite test-mysql test-postgres test-browser \
+	integration-test-mysql integration-test-postgres integration-test-sqlite sql \
+	docker-image docker-manifest docker-run docker-sh
+
 all: static
 
 clean:
-	@ rm -rf ./node_modules ./bower_components
+	@ rm -rf ./node_modules
 
 static: clean
 	@ npm install
-	@ ./node_modules/.bin/gulp bower
 	@ ./node_modules/.bin/gulp vendor js css
 	@ ./node_modules/.bin/jshint assets/js/{core,components,polyfills}
 
@@ -13,11 +20,8 @@ jshint:
 	@ ./node_modules/.bin/jshint assets/js/{core,components,polyfills}
 
 archive:
-	@ echo "Build archive: version=${version}, destination=${dst}"
-	@ git archive --format=zip --prefix=kanboard/ ${version} -o ${dst}/kanboard-${version}.zip
-
-test-sqlite-coverage:
-	@ ./vendor/bin/phpunit --coverage-html /tmp/coverage --whitelist app/ -c tests/units.sqlite.xml
+	@ echo "Build archive: version=$(VERSION)"
+	@ git archive --format=zip --prefix=kanboard/ $(VERSION) -o kanboard-$(VERSION).zip
 
 test-sqlite:
 	@ ./vendor/bin/phpunit -c tests/units.sqlite.xml
@@ -61,18 +65,47 @@ sql:
 	@ mysqldump -uroot --quote-names --no-create-info --skip-comments --no-set-names kanboard settings >> app/Schema/Sql/mysql.sql
 	@ mysqldump -uroot --quote-names --no-create-info --skip-comments --no-set-names kanboard links >> app/Schema/Sql/mysql.sql
 
-	@ php -r "echo 'INSERT INTO users (username, password, role) VALUES (\'admin\', \''.password_hash('admin', PASSWORD_DEFAULT).'\', \'app-admin\');';" | \
-	tee -a app/Schema/Sql/postgres.sql app/Schema/Sql/mysql.sql >/dev/null
+	@ let password_hash=`php -r "echo password_hash('admin', PASSWORD_DEFAULT);"` ;\
+	echo "INSERT INTO users (username, password, role) VALUES ('admin', '$$password_hash', 'app-admin');" >> app/Schema/Sql/mysql.sql ;\
+	echo "INSERT INTO public.users (username, password, role) VALUES ('admin', '$$password_hash', 'app-admin');" >> app/Schema/Sql/postgres.sql
 
 	@ let mysql_version=`echo 'select version from schema_version;' | mysql -N -uroot kanboard` ;\
 	echo "INSERT INTO schema_version VALUES ('$$mysql_version');" >> app/Schema/Sql/mysql.sql
 
 	@ let pg_version=`psql -U postgres -A -c 'copy(select version from schema_version) to stdout;' kanboard` ;\
-	echo "INSERT INTO schema_version VALUES ('$$pg_version');" >> app/Schema/Sql/postgres.sql
+	echo "INSERT INTO public.schema_version VALUES ('$$pg_version');" >> app/Schema/Sql/postgres.sql
 
 	@ grep -v "SET idle_in_transaction_session_timeout = 0;" app/Schema/Sql/postgres.sql > temp && mv temp app/Schema/Sql/postgres.sql
 
 docker-image:
-	@ IMAGE_NAME=kanboard/kanboard:latest ./hooks/build
+	@ docker build --build-arg VERSION=$(VERSION) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
 
-.PHONY: all
+docker-manifest:
+	for version in $(VERSION) latest; do \
+		docker build --build-arg VERSION=$(VERSION) -t $(DOCKER_IMAGE):amd64-$${version} -f Dockerfile . && \
+		docker build --build-arg VERSION=$(VERSION) -t $(DOCKER_IMAGE):arm32v6-$${version} -f Dockerfile.arm32v6 . && \
+		docker build --build-arg VERSION=$(VERSION) -t $(DOCKER_IMAGE):arm32v7-$${version} -f Dockerfile.arm32v7 . && \
+		docker build --build-arg VERSION=$(VERSION) -t $(DOCKER_IMAGE):arm64v8-$${version} -f Dockerfile.arm64v8 . && \
+		docker push $(DOCKER_IMAGE):amd64-$${version} && \
+		docker push $(DOCKER_IMAGE):arm32v6-$${version} && \
+		docker push $(DOCKER_IMAGE):arm32v7-$${version} && \
+		docker push $(DOCKER_IMAGE):arm64v8-$${version} && \
+		docker manifest create --amend $(DOCKER_IMAGE):$${version} \
+			$(DOCKER_IMAGE):amd64-$${version} \
+			$(DOCKER_IMAGE):arm32v6-$${version} \
+			$(DOCKER_IMAGE):arm32v7-$${version} \
+			$(DOCKER_IMAGE):arm64v8-$${version} && \
+		docker manifest annotate $(DOCKER_IMAGE):$${version} \
+			$(DOCKER_IMAGE):arm32v6-$${version} --os linux --arch arm --variant v6 && \
+		docker manifest annotate $(DOCKER_IMAGE):$${version} \
+			$(DOCKER_IMAGE):arm32v7-$${version} --os linux --arch arm --variant v7 && \
+		docker manifest annotate $(DOCKER_IMAGE):$${version} \
+			$(DOCKER_IMAGE):arm64v8-$${version} --os linux --arch arm64 --variant v8 && \
+		docker manifest push --purge $(DOCKER_IMAGE):$${version} ;\
+	done
+
+docker-run:
+	@ docker run --rm --name=kanboard -p 80:80 -p 443:443 $(DOCKER_IMAGE):$(DOCKER_TAG)
+
+docker-sh:
+	@ docker exec -ti kanboard bash
